@@ -1,0 +1,15 @@
+<h1><%= "#{@conference.name} Standings" %></h1>
+
+<%= render 'standings'%>
+
+<h3>Predicted Playoff Matchups</h3>
+
+<ul>
+    <li><%= @conference.leading_team.playoff_name_format %> vs. <%= @conference.wild_card_2.playoff_name_format %></li>
+    <li><%= @conference.second_place_in_lt_div.playoff_name_format %> vs. <%= @conference.third_place_in_lt_div.playoff_name_format %></li>
+    <li><%= @conference.first_place_other_div.playoff_name_format %> vs. <%= @conference.wild_card_1.playoff_name_format %></li>
+    <li><%= @conference.second_place_other_div.playoff_name_format %> vs. <%= @conference.third_place_other_div.playoff_name_format %>
+</ul>
+
+<%= link_to "#{@alt_conference.name} Conference Standings", conference_path(@alt_conference) %>
+

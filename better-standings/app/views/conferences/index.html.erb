@@ -1,0 +1,5 @@
+<h1>NHL Conferences</h1>
+
+<ul><% @conferences.each do | conference | %>
+    <li> <%= link_to "#{conference.name} Standings" , conference_path(conference) %></li>
+<% end %></ul>
