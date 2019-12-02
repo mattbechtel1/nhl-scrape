@@ -2,7 +2,7 @@
 
 <%= render 'standings'%>
 
-<h3>Predicted Playoff Matchups</h3>
+<h3>Projected Playoff Matchups</h3>
 
 <ul>
     <li><%= @conference.leading_team.playoff_name_format %> vs. <%= @conference.wild_card_2.playoff_name_format %></li>
@@ -14,4 +14,3 @@
 <%= link_to "#{@alt_conference.name} Conference Standings", conference_path(@alt_conference) %>
 
 <h6>Standings per NHL as of <%= @conference.updated_at %>.</h6>
-

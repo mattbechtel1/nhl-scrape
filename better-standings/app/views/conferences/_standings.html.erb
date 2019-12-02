@@ -3,7 +3,7 @@
         <tr>
             <th>Team</th>
             <th>Points / Game</th>
-            <th>Regulation Wins</th>
+            <th>Regulation Wins per 82</th>
             <th>Playoff Position</th>
         </tr>
     </thead>
@@ -11,8 +11,8 @@
     <% @teams.each do |team| %>
         <tr>
             <td><%= link_to team.name, team_path(team) %></td>
-            <td><%= number_with_precision(team.points_per_game, precision: 2) %></td>
-            <td><%= team.regulation_wins %></td>
+            <td><%= number_with_precision(team.points_per_game, precision: 3) %></td>
+            <td><%= number_with_precision(team.reg_wins_in_82, precision: 1) %></td>
             <td><%= team.playoff_position %></td>
         </tr>
     <% end %>
