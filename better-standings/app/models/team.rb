@@ -9,19 +9,9 @@ class Team < ApplicationRecord
     self.division == self.conference.leading_team.division
   end
 
-  def points_per_game
-    self.standings_points.to_f / self.games_played
-  end
-
-  def reg_wins_in_82
-    self.regulation_wins.to_f / self.games_played * 82
-  end
-
-  def better_teams
-    # ppg = self.points_per_game
-    Team.where('standings_points / games_played > ? OR (standings_points / games_played = ? AND regulation_wins / games_played = ?)', self.points_per_game, self.points_per_game, self.reg_wins_in_82)
-    # Team.all.select {|team| team.points_per_game > self.points_per_game || (team.points_per_game == self.points_per_game && team.reg_wins_in_82 > self.reg_wins_in_82) }
-  end
+  # def better_teams
+  #   Team.where('points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?)', self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+  # end
 
   def conference_teams
     Team.where('conference_id = ?', self.conference)
@@ -32,29 +22,18 @@ class Team < ApplicationRecord
   end
 
   def better_conf_teams
-    Team.where('conference_id = ? AND (standings_points * 1.0 / games_played > ? OR (standings_points * 1.0 / games_played = ? AND regulation_wins * 1.0 / games_played = ?))', self.conference_id, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+    Team.where('id != ? AND conference_id = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?))', self.id, self.conference_id, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
   end
 
   def better_div_teams
-    Team.where('division = ? AND (standings_points * 1.0 / games_played > ? OR (standings_points * 1.0 / games_played = ? AND regulation_wins * 1.0 / games_played = ?))', self.division, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+    Team.where('id != ? AND division = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?))', self.id, self.division, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
   end
 
   # def games_behind(compared_team)
   #   (self.games_played - compared_team.games_played + compared_team.standings_points - self.standings_points).to_f / 2
   # end
 
-  # def determine_comparison_team(better_conf_teams, better_div_teams)
-  #   better_alt_div_teams = better_conf_teams - better_div_teams
-  #   if better_alt_div_teams.count >= 5
-  #     games_behind(better_div_teams[2]) >= games_behind(better_alt_div_teams[4]) ? better_div_teams[2] : better_alt_div_teams[4]
-  #   else
-  #     better_div_teams[2]
-  #   end
-  # end
-
   def playoff_position
-    # better_conf_teams = self.better_teams.select { |team| team.conference == self.conference}
-    # better_div_teams = self.better_teams.select { |team| team.division == self.division}
     if self.better_conf_teams.count == 0
       puts "Now processing #{self.name} - #{self.id} - Best Team"
       "#{self.division}1 - #{self.conference.name[0]}1"

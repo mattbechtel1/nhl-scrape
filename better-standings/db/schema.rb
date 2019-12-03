@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_30_051433) do
+ActiveRecord::Schema.define(version: 2019_12_03_053224) do
 
   create_table "conferences", force: :cascade do |t|
     t.string "name"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(version: 2019_11_30_051433) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "nhl_identifier"
+    t.float "points_per_game"
+    t.float "reg_wins_in_82"
     t.index ["conference_id"], name: "index_teams_on_conference_id"
   end
 

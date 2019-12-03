@@ -21,7 +21,9 @@ response_hash["records"].each do | division |
             regulation_wins: team["regulationWins"],
             division: division["division"]["abbreviation"],
             conference: team_conference,
-            nhl_identifier: team["team"]["id"]
+            nhl_identifier: team["team"]["id"],
+            points_per_game: team["points"].to_f / team["gamesPlayed"],
+            reg_wins_in_82: team["regulationWins"].to_f / team["gamesPlayed"] * 82
         )
     end 
 end
