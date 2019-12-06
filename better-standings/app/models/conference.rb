@@ -52,5 +52,4 @@ class Conference < ApplicationRecord
     def third_place_other_div
         self.third_place_teams.find{ |team| !team.in_conf_leaders_div? }
     end
-
 end

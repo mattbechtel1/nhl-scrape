@@ -1,0 +1,13 @@
+<h1><%= @team.name %><h1>
+
+<ul>
+    <li>Conference: <%= link_to @team.conference.name, conference_path(@team.conference) %></li>
+    <li>Division: <%= @team.division %></li>
+    <li>Division Rank: <%= @team.better_div_teams + 1 %></li>
+</ul>
+
+<h4>Team Schedule</h4>
+
+    @team.teamgame.game.each do | game |
+        Date:
+        Result: (if game.winning_team_id = self.id), W, else L
