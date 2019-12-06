@@ -1,5 +1,6 @@
 class Team < ApplicationRecord
   belongs_to :conference
+  has_and_belongs_to_many :games
 
   def playoff_name_format
     "#{self.playoff_position}: #{self.name}"

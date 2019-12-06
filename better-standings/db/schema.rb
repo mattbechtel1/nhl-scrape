@@ -10,12 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_03_053224) do
+ActiveRecord::Schema.define(version: 2019_12_05_042125) do
 
   create_table "conferences", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.integer "nhl_identifier"
+    t.integer "away_team_id"
+    t.integer "home_team_id"
+    t.integer "first_star_player_id"
+    t.integer "second_star_player_id"
+    t.integer "third_star_player_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "games_teams", id: false, force: :cascade do |t|
+    t.integer "team_id", null: false
+    t.integer "game_id", null: false
   end
 
   create_table "teams", force: :cascade do |t|

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nhl_identifier: 1
+  away_team_id: 1
+  home_team_id: 1
+  first_star_player_id: 1
+  second_star_player_id: 1
+  third_star_player_id: 1
+
+two:
+  nhl_identifier: 1
+  away_team_id: 1
+  home_team_id: 1
+  first_star_player_id: 1
+  second_star_player_id: 1
+  third_star_player_id: 1
