@@ -1,0 +1,60 @@
+<h1><%= @team.name %></h1>
+
+<ul>
+    <li>Conference: <%= link_to @team.conference.name, conference_path(@team.conference) %></li>
+    <li>Division: <%= @team.division %></li>
+    <li>Division Rank: <%= (@team.better_div_teams.count + 1).ordinalize %></li>
+</ul>
+
+<h4>Team Schedule</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% @games.each do |game| %>
+        <tr>
+        
+        <% if game.gametime < DateTime.now %>
+            <td class = 'past'><%= game.gametime.strftime('%b. %d, %Y') %></td>
+        <% else %>
+            <td class = 'future'><%= game.gametime.strftime('%b. %d at %l:%M %P') %></td>
+        <% end %>
+
+        <% if game.winning_team_id.nil? %>
+            <td>
+            <% if game.home_team_id == @team.id %>
+                vs. <%= link_to Team.find(game.away_team_id).name, team_path(game.away_team_id) %>
+            <% else %>
+                @ <%= link_to Team.find(game.home_team_id).name, team_path(game.home_team_id) %> 
+            <% end %>
+            </td>
+            <td> </td>
+
+        <% elsif game.winning_team_id == @team.id %>
+            <td class = 'win'>
+            <% if game.home_team_id == @team.id %> vs.
+            <% else %> @ 
+            <% end %>
+                <%= link_to Team.find(game.losing_team_id).name, team_path(game.losing_team_id) %></td>
+            <td>Win</td>
+
+        <% else %>
+            <td class = 'loss'>
+            <% if game.home_team_id == @team.id %> vs.
+            <% else %> @ 
+            <% end %>
+                <%= link_to Team.find(game.winning_team_id).name, team_path(game.losing_team_id) %></td>
+            <td>Loss</td>
+        <% end %>
+        </tr>
+    <% end %>
+    </tbody>
+</table>
+
+<%= link_to 'Return to Standings', conference_path(@team.conference) %>

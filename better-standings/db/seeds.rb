@@ -93,6 +93,7 @@ GAME_NUMBERS.each { |game_num|
                     nhl_identifier: response_game["gamePk"],
                     away_team_id: match_team(response_game["gameData"]["teams"]["away"]["id"]),
                     home_team_id: match_team(response_game["gameData"]["teams"]["home"]["id"]),
+                    gametime: response_game["gameData"]["datetime"]["dateTime"],
                     winning_team_id: match_team(winning_team_identifier),
                     losing_team_id: match_team(losing_team_identifier)
             )
@@ -100,6 +101,7 @@ GAME_NUMBERS.each { |game_num|
         else
             Game.create(
                 nhl_identifier: response_game["gamePk"],
+                gametime: response_game["gameData"]["datetime"]["dateTime"],
                 away_team_id: match_team(response_game["gameData"]["teams"]["away"]["id"]),
                 home_team_id: match_team(response_game["gameData"]["teams"]["home"]["id"])
             )
@@ -107,10 +109,16 @@ GAME_NUMBERS.each { |game_num|
     end
     }
 
-#     puts 'setting teams with games'
-# Game.where.not(winning_team_id: nil).each { |game|
-#     puts 1271 - game.id
-#     home_win = game.home_team_id == game.winning_team_id
-#     GamesTeam.create(team_id: game.winning_team_id, game_id: game.id, win: true, home_game: home_win)
-#     GamesTeam.create(team_id: game.losing_team_id, game_id: game.id, win: false, home_game: !home_win)
-# }
+    puts 'associating teams to games'
+Game.where.not(winning_team_id: nil).each { |game|
+    puts 1271 - game.id
+    home_win = game.home_team_id == game.winning_team_id
+    TeamGame.create(team_id: game.winning_team_id, game_id: game.id, win: true, home_game: home_win)
+    TeamGame.create(team_id: game.losing_team_id, game_id: game.id, win: false, home_game: !home_win)
+}
+
+Game.where(winning_team_id: nil).each { |unplayed_game|
+    puts 1271 - unplayed_game.id
+    TeamGame.create(team_id: unplayed_game.home_team_id, game_id: unplayed_game.id, home_game: true)
+    TeamGame.create(team_id: unplayed_game.away_team_id, game_id: unplayed_game.id, home_game: false)
+}

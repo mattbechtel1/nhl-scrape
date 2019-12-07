@@ -1,7 +1,7 @@
 class Team < ApplicationRecord
   belongs_to :conference
-  has_many :games_teams
-  has_many :games, through: :games_teams
+  has_many :team_games
+  has_many :games, through: :team_games
 
   def playoff_name_format
     "#{self.playoff_position}: #{self.name}"
@@ -10,10 +10,6 @@ class Team < ApplicationRecord
   def in_conf_leaders_div?
     self.division == self.conference.leading_team.division
   end
-
-  # def better_teams
-  #   Team.where('points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?)', self.points_per_game, self.points_per_game, self.reg_wins_in_82)
-  # end
 
   def conference_teams
     Team.where('conference_id = ?', self.conference)
