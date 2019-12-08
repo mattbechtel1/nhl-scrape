@@ -5,8 +5,7 @@ class CreateTeamGames < ActiveRecord::Migration[6.0]
       t.references :team, null: false, foreign_key: true
       t.boolean :win
       t.string :home_game
-      t.string :boolean
-
+      
       t.timestamps
     end
   end

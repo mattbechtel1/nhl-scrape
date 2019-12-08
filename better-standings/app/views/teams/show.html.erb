@@ -49,12 +49,41 @@
             <% if game.home_team_id == @team.id %> vs.
             <% else %> @ 
             <% end %>
-                <%= link_to Team.find(game.winning_team_id).name, team_path(game.losing_team_id) %></td>
+                <%= link_to Team.find(game.winning_team_id).name, team_path(game.winning_team_id) %></td>
             <td>Loss</td>
         <% end %>
         </tr>
     <% end %>
     </tbody>
 </table>
+
+
+<h4>Top Players</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>⭐⭐⭐</th>
+            <th>⭐⭐</th>
+            <th>⭐</th>
+            <th>Total Star Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @players.each do |player| %>
+        <tr>
+            <td><%= player.name %></td>
+            <td><%= player.third_star_games %></td>
+            <td><%= player.second_star_games %></td>
+            <td><%= player.first_star_games %></td>
+            <td><%= player.star_score %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+
+
+<p>Star score = 3 points for a first star, 2 points for a second star, and 1 point for a third star of the game.</p>
 
 <%= link_to 'Return to Standings', conference_path(@team.conference) %>

@@ -38,8 +38,8 @@ GAMES_SUFFIX = '/feed/live'
 GAME_NUMBERS = [*1..1271]
 # GAME_NUMBERS = [*1..150]
 
-def to_four_digit_string(num)
-    num.to_s.rjust(4, '0')
+def to_n_digit_string(num, n)
+    num.to_s.rjust(n, '0')
 end
 
 def match_team(nhl_id)
@@ -49,7 +49,7 @@ end
 
     puts 'seeding games'
 GAME_NUMBERS.each { |game_num| 
-    game_num_str = to_four_digit_string(game_num)
+    game_num_str = to_n_digit_string(game_num, 4)
     request_string = "#{GAMES_PREFIX}#{game_num_str}#{GAMES_SUFFIX}"
     response_string_game = RestClient.get(request_string)
     response_game = JSON.parse(response_string_game)
@@ -81,9 +81,16 @@ GAME_NUMBERS.each { |game_num|
                     nhl_identifier: response_game["gamePk"],
                     away_team_id: match_team(response_game["gameData"]["teams"]["away"]["id"]),
                     home_team_id: match_team(response_game["gameData"]["teams"]["home"]["id"]),
-                    first_star_player_id: response_game["liveData"]["decisions"]["firstStar"]["id"],
-                    second_star_player_id: response_game["liveData"]["decisions"]["secondStar"]["id"],
-                    third_star_player_id: response_game["liveData"]["decisions"]["thirdStar"]["id"],
+                        #all players are assigned to the same team temporarily
+                    first_star_player_id: Player.find_or_create_by(
+                        nhl_identifier: response_game["liveData"]["decisions"]["firstStar"]["id"],
+                        team_id: 1).id,
+                    second_star_player_id: Player.find_or_create_by(
+                        nhl_identifier: response_game["liveData"]["decisions"]["secondStar"]["id"],
+                        team_id: 1).id,
+                    third_star_player_id: Player.find_or_create_by(
+                        nhl_identifier: response_game["liveData"]["decisions"]["thirdStar"]["id"],
+                        team_id: 1).id,
                     gametime: response_game["gameData"]["datetime"]["dateTime"],
                     winning_team_id: match_team(winning_team_identifier),
                     losing_team_id: match_team(losing_team_identifier)
@@ -122,3 +129,18 @@ Game.where(winning_team_id: nil).each { |unplayed_game|
     TeamGame.create(team_id: unplayed_game.home_team_id, game_id: unplayed_game.id, home_game: true)
     TeamGame.create(team_id: unplayed_game.away_team_id, game_id: unplayed_game.id, home_game: false)
 }
+
+    puts 'associating players with teams & names'
+players_in_db = Player.all.count
+Player.all.each { |player|
+        puts players_in_db - player.id
+        
+        player_id_str = to_n_digit_string(player.nhl_identifier, 7)
+        player_request_string = "https://statsapi.web.nhl.com/api/v1//people/#{player_id_str}"
+        response_string_player = RestClient.get(player_request_string)
+        response_player = JSON.parse(response_string_player)    
+
+        player.update(
+            name: response_player["people"][0]["fullName"],
+            team_id: match_team(response_player["people"][0]["currentTeam"]["id"]))
+    }
