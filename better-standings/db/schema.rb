@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_07_212659) do
+ActiveRecord::Schema.define(version: 2019_12_05_042125) do
 
   create_table "conferences", force: :cascade do |t|
     t.string "name"
@@ -27,28 +27,11 @@ ActiveRecord::Schema.define(version: 2019_12_07_212659) do
     t.integer "third_star_player_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "gametime"
-    t.integer "winning_team_id"
-    t.integer "losing_team_id"
   end
 
   create_table "games_teams", id: false, force: :cascade do |t|
     t.integer "team_id", null: false
     t.integer "game_id", null: false
-    t.boolean "win"
-    t.boolean "home_game"
-  end
-
-  create_table "team_games", force: :cascade do |t|
-    t.integer "game_id", null: false
-    t.integer "team_id", null: false
-    t.boolean "win"
-    t.string "home_game"
-    t.string "boolean"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["game_id"], name: "index_team_games_on_game_id"
-    t.index ["team_id"], name: "index_team_games_on_team_id"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -66,7 +49,5 @@ ActiveRecord::Schema.define(version: 2019_12_07_212659) do
     t.index ["conference_id"], name: "index_teams_on_conference_id"
   end
 
-  add_foreign_key "team_games", "games"
-  add_foreign_key "team_games", "teams"
   add_foreign_key "teams", "conferences"
 end

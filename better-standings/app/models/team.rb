@@ -1,7 +1,6 @@
 class Team < ApplicationRecord
   belongs_to :conference
-  has_many :team_games
-  has_many :games, through: :team_games
+  has_and_belongs_to_many :games
 
   def playoff_name_format
     "#{self.playoff_position}: #{self.name}"
@@ -10,6 +9,10 @@ class Team < ApplicationRecord
   def in_conf_leaders_div?
     self.division == self.conference.leading_team.division
   end
+
+  # def better_teams
+  #   Team.where('points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?)', self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+  # end
 
   def conference_teams
     Team.where('conference_id = ?', self.conference)
@@ -20,7 +23,7 @@ class Team < ApplicationRecord
   end
 
   def better_conf_teams
-    Team.where('id != ? AND conference_id = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 > ?))', self.id, self.conference_id, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+    Team.where('id != ? AND conference_id = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?))', self.id, self.conference_id, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
   end
 
   def better_div_teams
@@ -33,14 +36,19 @@ class Team < ApplicationRecord
 
   def playoff_position
     if self.better_conf_teams.count == 0
+      puts "Now processing #{self.name} - #{self.id} - Best Team"
       "#{self.division}1 - #{self.conference.name[0]}1"
     elsif self.better_div_teams.count < 3
+      puts "Now processing #{self.name} - #{self.id} - Elite Division Team"
       "#{self.division}#{better_div_teams.count + 1}"
     elsif self.better_div_teams.count < 4 && self.better_conf_teams.count < 7
+      puts "Now processing #{self.name} - #{self.id} - WC1"
       "WC1"
     elsif self.better_conf_teams.count < 8 && self.better_div_teams.count < 5
+      puts "Now processing #{self.name} - #{self.id} - WC2"
       "WC2"
     else
+      puts "Now processing #{self.name} - A bad team"
       ""
     end
   end
