@@ -29,9 +29,9 @@
         <% if game.winning_team_id.nil? %>
             <td>
             <% if game.home_team_id == @team.id %>
-                vs. <%= link_to Team.find(game.away_team_id).name, team_path(game.away_team_id) %>
+                vs. <%= link_to Team.find(game.away_team_id).name, team_path(game.away_team) %>
             <% else %>
-                @ <%= link_to Team.find(game.home_team_id).name, team_path(game.home_team_id) %> 
+                @ <%= link_to Team.find(game.home_team_id).name, team_path(game.home_team) %> 
             <% end %>
             </td>
             <td> </td>
@@ -41,7 +41,7 @@
             <% if game.home_team_id == @team.id %> vs.
             <% else %> @ 
             <% end %>
-                <%= link_to Team.find(game.losing_team_id).name, team_path(game.losing_team_id) %></td>
+                <%= link_to Team.find(game.losing_team_id).name, team_path(game.losing_team) %></td>
             <td>Win</td>
 
         <% else %>
@@ -49,7 +49,7 @@
             <% if game.home_team_id == @team.id %> vs.
             <% else %> @ 
             <% end %>
-                <%= link_to Team.find(game.winning_team_id).name, team_path(game.winning_team_id) %></td>
+                <%= link_to Team.find(game.winning_team_id).name, team_path(game.winning_team) %></td>
             <td>Loss</td>
         <% end %>
         </tr>

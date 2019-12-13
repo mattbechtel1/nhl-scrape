@@ -4,6 +4,10 @@ class Team < ApplicationRecord
   has_many :games, through: :team_games
   has_many :players
 
+  def to_param
+    slug
+  end
+
   def playoff_name_format
     "#{self.playoff_position}: #{self.name}"
   end

@@ -1,6 +1,10 @@
 class Conference < ApplicationRecord
     has_many :teams
 
+    def to_param
+        slug
+    end
+
     def team_position_by(playoff_code)
         self.teams.find{ |team| team.playoff_position.match(playoff_code) }
     end

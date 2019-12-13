@@ -13,7 +13,7 @@ class ConferencesController < ApplicationController
     private
 
     def get_conference
-        @conference = Conference.find(params[:id])
+        @conference = Conference.find_by(slug: params[:slug])
     end
 
     # def strong_params

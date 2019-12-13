@@ -12,13 +12,22 @@ response_standings = JSON.parse(response_string_standings)
 
 puts 'seeding teams'
 tnum = 1
+
+def slugify(name)
+    name.downcase.split(" ").join("-")
+end
+
 response_standings["records"].each do | division |
-    team_conference = Conference.find_or_create_by(name: division["conference"]["name"])
+    team_conference = Conference.find_or_create_by(
+        name: division["conference"]["name"],
+        slug: slugify(division["conference"]["name"])
+    )
     
     division["teamRecords"].each do | team |
         puts 31 - tnum
         Team.create(
             name: team["team"]["name"],
+            slug: slugify(team["team"]["name"]),
             standings_points: team["points"],
             games_played: team["gamesPlayed"],
             regulation_wins: team["regulationWins"],
@@ -136,7 +145,7 @@ Player.all.each { |player|
         puts players_in_db - player.id
         
         player_id_str = to_n_digit_string(player.nhl_identifier, 7)
-        player_request_string = "https://statsapi.web.nhl.com/api/v1//people/#{player_id_str}"
+        player_request_string = "https://statsapi.web.nhl.com/api/v1/people/#{player_id_str}"
         response_string_player = RestClient.get(player_request_string)
         response_player = JSON.parse(response_string_player)    
 
