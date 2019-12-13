@@ -25,7 +25,7 @@ class Team < ApplicationRecord
   end
 
   def better_div_teams
-    Team.where('id != ? AND division = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 = ?))', self.id, self.division, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
+    Team.where('id != ? AND division = ? AND (points_per_game > ? OR (points_per_game = ? AND reg_wins_in_82 > ?))', self.id, self.division, self.points_per_game, self.points_per_game, self.reg_wins_in_82)
   end
 
   # def games_behind(compared_team)
