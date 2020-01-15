@@ -1,51 +1,56 @@
 require 'json'
 require 'rest-client'
 
-Team.destroy_all
-Conference.destroy_all
-Game.destroy_all
+full_reset = false
+
+if full_reset
+    Team.destroy_all
+    Conference.destroy_all
+end
+    Game.destroy_all
 
 STANDINGS = 'https://statsapi.web.nhl.com/api/v1/standings'
 
 response_string_standings = RestClient.get(STANDINGS)
 response_standings = JSON.parse(response_string_standings)
 
-puts 'seeding teams'
-tnum = 1
+if full_reset
+    puts 'seeding teams'
+    tnum = 1
 
-def slugify(name)
-    name.downcase.split(" ").join("-")
-end
+    def slugify(name)
+        name.downcase.split(" ").join("-")
+    end
 
-response_standings["records"].each do | division |
-    team_conference = Conference.find_or_create_by(
-        name: division["conference"]["name"],
-        slug: slugify(division["conference"]["name"])
-    )
-    
-    division["teamRecords"].each do | team |
-        puts 31 - tnum
-        Team.create(
-            name: team["team"]["name"],
-            slug: slugify(team["team"]["name"]),
-            standings_points: team["points"],
-            games_played: team["gamesPlayed"],
-            regulation_wins: team["regulationWins"],
-            division: division["division"]["abbreviation"],
-            conference: team_conference,
-            nhl_identifier: team["team"]["id"],
-            points_per_game: team["points"].to_f / team["gamesPlayed"],
-            reg_wins_in_82: team["regulationWins"].to_f / team["gamesPlayed"] * 82
+    response_standings["records"].each do | division |
+        team_conference = Conference.find_or_create_by(
+            name: division["conference"]["name"],
+            slug: slugify(division["conference"]["name"])
         )
-        tnum += 1
-    end 
+        
+        division["teamRecords"].each do | team |
+            puts 31 - tnum
+            Team.create(
+                name: team["team"]["name"],
+                slug: slugify(team["team"]["name"]),
+                standings_points: team["points"],
+                games_played: team["gamesPlayed"],
+                regulation_wins: team["regulationWins"],
+                division: division["division"]["abbreviation"],
+                conference: team_conference,
+                nhl_identifier: team["team"]["id"],
+                points_per_game: team["points"].to_f / team["gamesPlayed"],
+                reg_wins_in_82: team["regulationWins"].to_f / team["gamesPlayed"] * 82
+            )
+            tnum += 1
+        end 
+    end
 end
 
 
 GAMES_PREFIX = 'https://statsapi.web.nhl.com/api/v1/game/201902'
 GAMES_SUFFIX = '/feed/live'
 GAME_NUMBERS = [*1..1271]
-# GAME_NUMBERS = [*1..150]
 
 def to_n_digit_string(num, n)
     num.to_s.rjust(n, '0')
