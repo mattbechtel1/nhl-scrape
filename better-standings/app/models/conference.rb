@@ -22,7 +22,7 @@ class Conference < ApplicationRecord
     end
 
     def wild_card_2
-        team_position_by(/WC2/)
+        team_position_by(/WC2/) || self.teams.select{ |team| team.playoff_position.match("WC1") }[1]
     end
 
     def first_place_teams

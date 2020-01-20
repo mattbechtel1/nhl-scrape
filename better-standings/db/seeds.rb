@@ -118,17 +118,17 @@ if full_reset
                             #all players are assigned to the same team temporarily
                         first_star_player_id: Player.find_or_create_by(
                             nhl_identifier: response_game["liveData"]["decisions"]["firstStar"]["id"],
-                            team_id: 1).id,
+                            team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["firstStar"]["link"]}"))["people"][0]["currentTeam"]["id"])),
                         second_star_player_id: Player.find_or_create_by(
                             nhl_identifier: response_game["liveData"]["decisions"]["secondStar"]["id"],
-                            team_id: 1).id,
+                            team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["secondStar"]["link"]}"))["people"][0]["currentTeam"]["id"])),
                         third_star_player_id: Player.find_or_create_by(
                             nhl_identifier: response_game["liveData"]["decisions"]["thirdStar"]["id"],
-                            team_id: 1).id,
+                            team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["thirdStar"]["link"]}"))["people"][0]["currentTeam"]["id"])),
                         gametime: response_game["gameData"]["datetime"]["dateTime"],
                         winning_team_id: match_team(winning_team_identifier),
                         losing_team_id: match_team(losing_team_identifier)
-                )
+                    )
                 else
                     Game.create(
                         nhl_identifier: response_game["gamePk"],
@@ -181,16 +181,18 @@ else
     
                     if response_game["liveData"]["decisions"]["firstStar"]
                         game.update(
-                                #all players are assigned to the same team temporarily
                             first_star_player_id: Player.find_or_create_by(
                                 nhl_identifier: response_game["liveData"]["decisions"]["firstStar"]["id"],
-                                team_id: 1).id,
+                                team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["firstStar"]["link"]}"))["people"][0]["currentTeam"]["id"]
+                                )),
                             second_star_player_id: Player.find_or_create_by(
                                 nhl_identifier: response_game["liveData"]["decisions"]["secondStar"]["id"],
-                                team_id: 1).id,
+                                team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["secondStar"]["link"]}"))["people"][0]["currentTeam"]["id"]
+                                )),
                             third_star_player_id: Player.find_or_create_by(
                                 nhl_identifier: response_game["liveData"]["decisions"]["thirdStar"]["id"],
-                                team_id: 1).id,
+                                team_id: match_team(JSON.parse(RestClient.get("https://statsapi.web.nhl.com/#{response_game["liveData"]["decisions"]["thirdStar"]["link"]}"))["people"][0]["currentTeam"]["id"]
+                                )),
                             winning_team_id: match_team(winning_team_identifier),
                             losing_team_id: match_team(losing_team_identifier)
                         )  
@@ -218,17 +220,17 @@ if full_reset
     }
 end
 
-    puts 'associating players with teams & names'
-players_in_db = Player.all.count
-Player.all.each { |player|
-        puts players_in_db - player.id
+#     puts 'associating players with teams & names'
+# players_in_db = Player.all.count
+# Player.all.each { |player|
+#         puts players_in_db - player.id
         
-        player_id_str = to_n_digit_string(player.nhl_identifier, 7)
-        player_request_string = "https://statsapi.web.nhl.com/api/v1/people/#{player_id_str}"
-        response_string_player = RestClient.get(player_request_string)
-        response_player = JSON.parse(response_string_player)    
+#         player_id_str = to_n_digit_string(player.nhl_identifier, 7)
+#         player_request_string = "https://statsapi.web.nhl.com/api/v1/people/#{player_id_str}"
+#         response_string_player = RestClient.get(player_request_string)
+#         response_player = JSON.parse(response_string_player)    
 
-        player.update(
-            name: response_player["people"][0]["fullName"],
-            team_id: match_team(response_player["people"][0]["currentTeam"]["id"]))
-    }
+#         player.update(
+#             name: response_player["people"][0]["fullName"],
+#             team_id: match_team(response_player["people"][0]["currentTeam"]["id"]))
+#     }
